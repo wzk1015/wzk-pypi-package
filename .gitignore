@@ -1,5 +1,7 @@
+.DS_Store
 build/
 dist/
-wzk.egginfo/
+wzk.egg-info/
 *.csv
 __pycache__/
+.idea/

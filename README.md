@@ -33,7 +33,7 @@ wzk.translate("I love you"):
 Send email with SMTP!
 ```python
 sender = wzk.parser.MailSender(mail_host, mail_user, mail_pass)
-sender.send_mail(title="hi~", content="nothing~", receiver=None))
+sender.send_mail(title="hi~", content="nothing~", receiver=None)
 ```
 
 ### check web page update
@@ -43,7 +43,7 @@ checker = wzk.parser.WebPageUpdateChecker(mail_host, mail_user, mail_pass)
 checker.check("www.baidu.com", interval=10)
 ```
 
-### improved data structure
+### use improved data structure
 ```python
 from wzk import DD, N
 
