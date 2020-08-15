@@ -1,0 +1,5 @@
+build/
+dist/
+wzk.egginfo/
+*.csv
+__pycache__/
