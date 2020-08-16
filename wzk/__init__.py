@@ -9,6 +9,8 @@ from .games.mahjong import play as mahjong
 from .vocab.vocab import lookup
 from .vocab.vocab import translate
 from .utils import *
+from .ds import *
+from .parser import *
 
 from time import ctime
 

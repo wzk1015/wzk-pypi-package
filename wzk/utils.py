@@ -1,4 +1,5 @@
 from difflib import Differ
+import time
 
 
 def diff_compare(in_lines1, in_lines2):
@@ -10,171 +11,115 @@ def diff_compare(in_lines1, in_lines2):
     return result
 
 
-class L(list):
-    def __init__(self, *args):
-        list.__init__([])
-        if len(args) == 1 and isinstance(args[0], list):
-            self.extend(args[0])
+class ErrorFucker:
+    def __init__(self, msg="You idiot! You've raised error!",
+                 exps=None, raises=False, bonus=True):
+        if isinstance(exps, Exception):
+            self.exps = [exps]
         else:
-            self.extend(list(args))
+            self.exps = exps
+        self.msg = msg
+        self.raises = raises
+        self.bonus = bonus
 
+    def __enter__(self):
+        return self
 
-class S(str):
-    def __init__(self, s=""):
-        str.__init__(s)
-
-
-class D(dict):
-    def __init__(self, dct=None):
-        if dct is None:
-            dct = {}
-        super().__init__(dct)
-        self._inv = {dct[key]: key for key in dct.keys()}
-
-    def __setitem__(self, key, value):
-        super().__setitem__(key, value)
-        try:
-            self._inv[value] = key
-        except TypeError:
-            pass
-
-    def __delitem__(self, key):
-        v = self[key]
-        self._inv.__delitem__(v)
-        super().__delitem__(key)
-
-    def inv(self):
-         return DD(self._inv)
-
-
-class DD(D):
-    def __init__(self, dct=None):
-        super().__init__({})
-        if dct is not None:
-            for k, v in dct.items():
-                self[k] = v
-
-    def __setitem__(self, key, value):
-        try:
-            if key is not str:
-                raise AttributeError
-            self.__getattribute__(key)
-            raise TypeError("cannot set built-in name attribute " + key)
-        except AttributeError:
-            super().__setitem__(key, value)
-
-    def __getattribute__(self, item):
-        if item == "_keys":
-            return super().keys()
-        if item in self._keys:
-            return super().__getitem__(item)
-        return super().__getattribute__(item)
-
-    def __setattr__(self, key, value):
-        if key != "_inv":
-            self.__setitem__(key, value)
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        print(self.msg)
+        print(str(exc_type)[8:-2] + ":  " + str(exc_val))
+        if self.raises:
+            if self.bonus:
+                print("I threw it out!")
         else:
-            super().__setattr__(key, value)
-
-    def __delattr__(self, item):
-        self.__delitem__(item)
-
+            if self.bonus:
+                print("Luckily I've handled this.")
+            return True
 
 
-class T(tuple):
-    def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], tuple):
-            tuple.__init__(args[0])
+class Separate:
+    def __init__(self, title="", pad="-", center=True, length=30,
+                 count=False, enter_print=True):
+        self.title = title
+        self.pad = pad
+        self.center = center
+        self.length = length
+        self.do_count = count
+        self.count = 0
+        self.enter = enter_print
+
+    def __enter__(self):
+        if self.enter:
+            self.count += 1
+            content = self.title + str(self.count) if self.do_count else ""
+            if self.center:
+                print(content.center(self.length, self.pad))
+            else:
+                print(content.ljust(self.length, self.pad))
+        return self
+
+    def __exit__(self, *args):
+        if not self.enter:
+            self.count += 1
+        content = self.title + (str(self.count) if self.do_count else "")
+        if self.center:
+            print(content.center(self.length, self.pad))
         else:
-            tuple.__init__(tuple(args))
+            print(content.ljust(self.length, self.pad))
 
 
-class Set(set):
-    def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], set):
-            set.__init__(args[0])
-        else:
-            set.__init__(set(args))
+class Clock:
+    def __init__(self, prefix="", print_out=True):
+        self.prefix = prefix
+        self.time = None
+        self.start = None
+        self.print_out = print_out
 
+    def begin(self):
+        self.start = time.time()
+        if self.print_out:
+            print("begin timing".center(30, "-"))
 
-class N:
-    def __init__(self, i, lower_bound=None, upper_bound=None, loop=False,
-                 integer=False):
-        self.loop = loop
-        if upper_bound is not None and lower_bound is not None:
-            upper_bound, lower_bound = int(upper_bound), int(lower_bound)
-            assert upper_bound > lower_bound
-            self.range = upper_bound - lower_bound
-        self.ub = upper_bound
-        self.lb = lower_bound
-        self.value = i
-        self.integer = integer
+    def end(self):
+        self.time = time.time() - self.start
 
-    def _bound_check(self, value):
-        if not self.loop and (self.ub is not None and value > self.ub) \
-                or (self.lb is not None and value < self.lb):
-            raise OverflowError("number " + str(self) + " overflow its range ["
-                                + str(self.lb) + ", " + str(self.ub) + "]")
-        if self.integer and not isinstance(value, int):
-            raise TypeError("force-integer number cannot be " + str(value))
-        if hasattr(self, 'range'):
-            return (value - self.lb) % (self.ub - self.lb) + self.lb
-        return N(value)
+    def _check(self):
+        if self.time is None:
+            raise RuntimeError("clock referenced before end of timing")
 
-    def __add__(self, other):
-        return self._bound_check(self.value + float(other))
+    def __enter__(self):
+        self.begin()
+        return self
 
-    def __sub__(self, other):
-        return self._bound_check(self.value - float(other))
+    def __exit__(self, *args):
+        self.end()
+        if self.print_out:
+            print("end timing".center(30, "-"))
+            print('%s clock time: %.4f seconds' % (self.prefix, self.time))
 
-    def __mul__(self, other):
-        return self._bound_check(self.value*float(other))
+    def __str__(self):
+        self._check()
+        return str(self.time)
 
-    def __div___(self, other):
-        return self._bound_check(self.value/float(other))
-
-    def __repr__(self):
-        return str(self.value)
-
-    def __int__(self):
-        return int(self.value)
-
-    def __float__(self):
-        return float(self.value)
-
-    def __le__(self, other):
-        return self.value <= float(other)
-
-    def __lt__(self, other):
-        return self.value < float(other)
-
-    def __ge__(self, other):
-        return self.value >= float(other)
-
-    def __gt__(self, other):
-        return self.value > float(other)
-
-    def __eq__(self, other):
-        return self.value == float(other)
-
-    def __ne__(self, other):
-        return self.value != float(other)
-
-    def __pow__(self, power, modulo=None):
-        return self.value ** float(power)
-
-    def __mod__(self, other):
-        return self.value%float(other)
-
-    def set(self, v):
-        self.value = self._bound_check(v)
+    def __call__(self):
+        self._check()
+        return self.time
 
 
 if __name__ == '__main__':
-    b = N(4, upper_bound=8, lower_bound=3, loop=True)
-    print(b + 12)
-    a = DD({"good": "kk"})
-    a.bad = "nyima"
-    print(a.good)
-    print(a["bad"])
-    print(a.inv()["nyima"])
+    with ErrorFucker(raises=False) as ef1:
+        d1 = int("f")
+
+    with Separate("seperate zone", count=True) as s:
+        print("ohhh")
+
+    with s:
+        with Clock("test") as c:
+            time.sleep(2)
+        print(c)
+        with c:
+            time.sleep(2)
+
+    with ErrorFucker(raises=True) as ef2:
+        d2 = int("d")
+
