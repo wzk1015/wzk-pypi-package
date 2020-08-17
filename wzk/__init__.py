@@ -11,6 +11,7 @@ from .vocab.vocab import translate
 from .utils import *
 from .ds import *
 from .parser import *
+from .autograd import *
 
 from time import ctime
 
@@ -20,3 +21,7 @@ print("Welcome to wzk's library!")
 
 def greeting():
     print("It's", ctime(), "Greeting from wzk!")
+
+
+def 爬():
+    print("wzk爬了")

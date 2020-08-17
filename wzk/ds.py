@@ -118,7 +118,7 @@ class N:
     def __mul__(self, other):
         return self._bound_check(self.value*float(other))
 
-    def __div___(self, other):
+    def __truediv__(self, other):
         return self._bound_check(self.value/float(other))
 
     def __repr__(self):
@@ -159,6 +159,9 @@ class N:
 
 
 if __name__ == '__main__':
+    s = S("wzk is really good")
+    s.remove("lo ")
+    print(s)
     b = N(4, upper_bound=8, lower_bound=3, loop=True)
     print(b + 12)
     a = DD({"good": "kk"})

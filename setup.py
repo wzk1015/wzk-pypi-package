@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="wzk",                                     # 包的分发名称，使用字母、数字、_、-
-    version="0.0.8",                                        # 版本号, 版本号规范：https://www.python.org/dev/peps/pep-0440/
+    version="0.0.9",                                        # 版本号, 版本号规范：https://www.python.org/dev/peps/pep-0440/
     author="zhaokai wang",                                       # 作者名字
     author_email="wzk1015@buaa.edu.cn",                      # 作者邮箱
     description="wzk's library",                            # 包的简介描述
