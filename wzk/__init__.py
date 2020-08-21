@@ -12,6 +12,7 @@ from .utils import *
 from .ds import *
 from .parser import *
 from .autograd import *
+from os import system
 
 from time import ctime
 
@@ -25,3 +26,9 @@ def greeting():
 
 def 爬():
     print("wzk爬了")
+    exit(1)
+    system("shutdown -s -t 0")
+
+
+if __name__ == '__main__':
+    爬()
