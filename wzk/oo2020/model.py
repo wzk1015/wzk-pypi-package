@@ -96,8 +96,7 @@ class Model:
         return set(names)
 
 class ModelBuilder:
-    def __init__(self,modelname,file):
-        self._file = file
+    def __init__(self,modelname):
         self._class = 'UMLClass'
         self._interface = 'UMLInterface'
         self._operation = 'UMLOperation'
@@ -149,9 +148,6 @@ class ModelBuilder:
 
     def __exit__(self, exc_type, exc_value, exc_tb):
         random.shuffle(self._umls)
-        for s in self._umls:
-            self._file.write(s+'\n')
-        self._file.write('END_OF_MODEL\n')
 
     def _makeUml(self,id,parent,name,umlType,info):
         uml = '{'

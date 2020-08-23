@@ -18,20 +18,21 @@ pat = Xeger(limit=20)
 nest = 0
 
 
-def judge(ans, fx, ignore_wf):
+def derivative_judge(ans, fx, wf_raise=True):
     my_answer = ans.strip()
     if my_answer == "":
         return False
-    if my_answer == "WRONG FORMAT!" and not ignore_wf:
-        return False
-    n = random.uniform(-10, 10)
-    ##############
-    ##############
+    if my_answer == "WRONG FORMAT!":
+        if wf_raise:
+            raise ValueError("wrong format")
+        else:
+            return False
+    n = uniform(-10, 10)
     x = sympy.Symbol('x')
-    tureValue = sympy.diff(fx, 'x').evalf(subs={x: n})
-    myValue = sympy.sympify(my_answer).evalf(subs={x: n})
+    ture_value = sympy.diff(fx, 'x').evalf(subs={x: n})
+    my_value = sympy.sympify(my_answer).evalf(subs={x: n})
 
-    return myValue == tureValue
+    return my_value == ture_value
 
 
 def hw1_generator(length):

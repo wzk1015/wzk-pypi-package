@@ -39,6 +39,33 @@ wzk.lookup("good", verbose=True, non_alpha=False")
 wzk.translate("I love you"):
 ```
 
+### check your OO homework
+
+Generate data, judge your results, and beatmatch with peers
+
+Note: made in 2020, may not be applicable in later years
+
+```python
+from wzk.oo2020 import *
+
+beatmatch(["test1.txt","test2.txt","test3.txt"])
+print(hw3_generator(10))
+print(hw7_generator(10,3,10))
+print(hw11_generator(10,5))
+print(hw13_generator())
+print(derivative_judge("3*x**2","x**3"))
+print(hw5_judge(open("out.txt").read(), open("data.txt").read()))
+```
+
+### NLP metric
+
+Calculate BLEU score
+
+```python
+from wzk.nlp import bleu
+print(bleu("they are good", "they are not good", k=2))
+```
+
 
 
 ## Useful Tools
@@ -64,7 +91,7 @@ checker.check("www.baidu.com", interval=10)
 
 ## For Developers
 
-### use improved data structure
+### improved data structure
 
 Dictionary supporting inverse-mapping and attribute-indexing
 
@@ -85,7 +112,7 @@ b += 5
 c = N(4, upper_bound=8, lower_bound=3, loop=True)
 print(c+5)
 ```
-### discover interestring utensils
+### interestring utensils
 
 Several interesing utensils
 
@@ -108,7 +135,7 @@ with ErrorFucker(raises=True) as ef2:
     d2 = int("d")
 ```
 
-### use simplified pytorch(?)
+### simplified pytorch(?)
 
 Scalar autograd mechanism
 

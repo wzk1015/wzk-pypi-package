@@ -88,7 +88,7 @@ def randomParent(total, builder, parentlist, void, create, isClass=True):
                                     'int')
 
 
-def randomGen(builder, gentotal, parentlist, parenttotal, struct):
+def randomGen(builder, gentotal, parentlist, parenttotal):
     def findfather(a):
         if (parent[a] != a):
             parent[a] = findfather(parent[a])
@@ -101,7 +101,6 @@ def randomGen(builder, gentotal, parentlist, parenttotal, struct):
             parent[fa] = fb
 
     parent = {}
-    struct.write('classes:\n')
     for i in range(parenttotal):
         parent[i] = i
     for i in range(gentotal):
@@ -109,13 +108,10 @@ def randomGen(builder, gentotal, parentlist, parenttotal, struct):
         while (findfather(fa) == findfather(i)):
             fa = random.randint(0, parenttotal - 1)
         link(i, fa)
-        struct.write(str(i) + ' father is ' + str(fa) + '\n')
         builder.createGeneralization('gen', parentlist[i], parentlist[fa])
-    struct.write('\n')
 
 
-def randomInterfaceGenerealization(builder, struct, parentlist):
-    struct.write('interfaces:\n')
+def randomInterfaceGenerealization(builder, parentlist):
     parent = {}
     for i in range(interfacetotal):
         parent[i] = set()
@@ -143,7 +139,6 @@ def randomInterfaceGenerealization(builder, struct, parentlist):
                 for t in parent:
                     if i in parent[t]:
                         parent[t].update(parent[i])
-                struct.write(parentlist[i] + ' father is ' + parentlist[fa] + '\n')
                 '''
                 print('new')
                 for s in parent:
@@ -173,16 +168,16 @@ def randomAssociation(builder, list):
         builder.createAssociation('asso', 'public', 'public', end1, end2)
 
 
-def randomData(file, struct):
-    with ModelBuilder('random', file) as builder:
+def randomData():
+    with ModelBuilder('random') as builder:
         classlist = []
         interfacelist = []
         randomParent(classtotal, builder, classlist, makeClassName, builder.createClass, True)
         randomParent(interfacetotal, builder, interfacelist, makeInterfaceName, builder.createInterface, False)
         if (classNameMulti):
             builder.createClass(makeClassName(random.randint(0, classtotal)), 'public')
-        randomGen(builder, geneclasstotal, classlist, classtotal, struct)
-        randomInterfaceGenerealization(builder, struct, interfacelist)
+        randomGen(builder, geneclasstotal, classlist, classtotal)
+        randomInterfaceGenerealization(builder, interfacelist)
         randomRealization(builder, classlist, interfacelist)
         randomAssociation(builder, classlist + interfacelist)
         model = builder.getModel()
@@ -191,14 +186,14 @@ def randomData(file, struct):
 
 class randomUmlMake:
     def __init__(self, filecount):
-        file = '../../../Java_projects/OO/data.txt'
-        filestruct = '../data_struct.txt'
-        self._file = open(file, 'w')
-        self._struct = open(filestruct, 'w')
+        pass
+        #file = '../../../Java_projects/OO/data.txt'
+        #filestruct = '../data_struct.txt'
+        #self._file = open(file, 'w')
+        #self._struct = open(filestruct, 'w')
 
     def __enter__(self):
-        return (randomData(self._file, self._struct), self._file)
+        return randomData(), None
 
-    def __exit__(self, exc_type, exc_value, exc_tb):
-        self._file.close()
-        self._struct.close()
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        pass
