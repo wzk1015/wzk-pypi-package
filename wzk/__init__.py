@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 from . import parser
 
 from .games.flight_game import play as flight_game

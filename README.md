@@ -35,8 +35,8 @@ wzk.mahjong()
 Off-line Chinese-English dictionary with more than 100k words
 ```python
 import wzk
-wzk.lookup("good", verbose=True, non_alpha=False")
-wzk.translate("I love you"):
+wzk.lookup("good", verbose=True, non_alpha=False)
+wzk.translate("I love you")
 ```
 
 ### check your OO homework
@@ -48,7 +48,7 @@ Note: made in 2020, may not be applicable in later years
 ```python
 from wzk.oo2020 import *
 
-beatmatch(["test1.txt","test2.txt","test3.txt"])
+check_files(["test1.txt","test2.txt","test3.txt"])
 print(hw3_generator(10))
 print(hw7_generator(10,3,10))
 print(hw11_generator(10,5))
@@ -70,21 +70,53 @@ print(bleu("they are good", "they are not good", k=2))
 
 ## Useful Tools
 
+### simple version control system
+
+luna init; luna commit; luna reset;
+
+```python
+from wzk.luna import *
+p = "/Users/wzk/Desktop/"
+init(p)
+makefile(p, "1")
+commit(p, "commit 1")
+makefile(p, "2")
+commit(p, "commit 2")
+revise(p, 2, "commit 3 new message")
+reset(p, 1)
+reset(p, 2)
+history(p)
+```
+
 ### send email
 
 Send email with SMTP
 ```python
 import wzk
+mail_host = ...
+mail_user = ...
+mail_pass = ...
 sender = wzk.parser.MailSender(mail_host, mail_user, mail_pass)
 sender.send_mail(title="hi~", content="nothing~", receiver=None)
 ```
 
 ### check web page update
-Automatically check web page and send notification email when update
+Automatically check web page and send notification email upon update
 ```python
 import wzk
+mail_host = ...
+mail_user = ...
+mail_pass = ...
 checker = wzk.parser.WebPageUpdateChecker(mail_host, mail_user, mail_pass)
 checker.check("www.baidu.com", interval=10)
+```
+
+### check system information
+see information on your system and python
+```python
+from wzk.os import *
+show_os_all_info()
+show_python_all_info()
 ```
 
 
@@ -151,12 +183,6 @@ f = relu(c) + sin(e)
 g = log(f)
 
 g.backward()
-print(a)
-print(b)
-print(c)
-print(d)
-print(e)
-print(f)
-print(g)
+print(a, b, c, d, e, f, g)
 ```
 
