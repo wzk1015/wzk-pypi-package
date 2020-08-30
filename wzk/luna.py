@@ -3,6 +3,7 @@ import time
 import json
 import getpass
 import warnings
+import sys
 from pprint import pprint
 
 
@@ -27,16 +28,18 @@ def _read_meta(path, key):
     try:
         with open(_luna(path, "metadata.json"), "r") as f:
             meta = json.load(f)
-            return meta[key]
+        if key is None:
+            return meta
+        return meta[key]
     except FileNotFoundError:
         raise FileNotFoundError("Not a luna directory: " + str(path))
 
 
 def _get_details(path, version):
     details = _read_meta(path, "version_details")
-    key = "version " + str(version)
+    key = "version " + version
     if key not in details.keys():
-        raise ValueError("Unknown version: " + str(version))
+        raise ValueError("Unknown version: " + version)
     return details
 
 
@@ -64,25 +67,49 @@ def init(path):
                 "creator"        : getpass.getuser(),
                 "path"           : path,
                 "num_versions"   : 0,
+                "cur_version"    : 0,
                 "version_details": {},
                 "history"        : []
             }
             json.dump(meta, f)
         _add_history(path, "luna init at " + path)
+        print("init luna repo at " + path)
 
 
 def commit(path, msg):
-    version = _read_meta(path, "num_versions") + 1
+    version = str(int(_read_meta(path, "num_versions")) + 1)
     details = _read_meta(path, "version_details")
-    os.mkdir(_luna(path, "versions", str(version)))
-    os.popen("cp -r {}/* {}".format(path, _luna(path, "versions", str(version)))).close()
-    details["version " + str(version)] = {
+    os.mkdir(_luna(path, "versions", version))
+    os.popen("cp -r {}/* {}".format(path, _luna(path, "versions", version))).close()
+    details["version " + version] = {
         "creator": getpass.getuser(),
         "time"   : time.ctime(),
         "msg"    : msg,
     }
-    _write_meta(path, num_versions=version, version_details=details)
-    _add_history(path, "luna commit version " + str(version))
+    _write_meta(path, num_versions=version, version_details=details, cur_version=version)
+    _add_history(path, "luna commit version {} with message '{}'".format(version, msg))
+    print("commit version " + version)
+
+
+def revise(path, version, msg):
+    version = str(version)
+    details = _get_details(path, version)
+    details["version " + version]["msg"] = msg
+    _write_meta(path, version_details=details)
+    _add_history(path, "luna revise version {} with message '{}'".format(version, msg))
+    print("revise version " + version)
+
+
+def reset(path, version):
+    version = str(version)
+    _get_details(path, version)
+    os.popen("mv {} {}".format(_luna(path), os.path.join(path, "..", ".luna_temp"))).close()
+    os.popen("rm -rf {}/*".format(path), "w").close()
+    os.popen("mv {} {}".format(os.path.join(path, "..", ".luna_temp"), _luna(path))).close()
+    os.popen("cp -r {} {}".format(_luna(path, "versions", version, "*"), path)).close()
+    _write_meta(path, cur_version=version)
+    _add_history(path, "luna reset to version " + version)
+    print("reset to version " + version)
 
 
 def log(path):
@@ -93,34 +120,31 @@ def history(path):
     pprint(_read_meta(path, "history"))
 
 
+def info(path):
+    pprint(_read_meta(path, None))
+
+
 def view(path, version):
-    pprint(_get_details(path, version)["version " + str(version)])
+    version = str(version)
+    pprint(_get_details(path, version)["version " + version])
 
 
-def revise(path, version, msg):
-    details = _get_details(path, version)
-    details["version " + str(version)]["msg"] = msg
-    _write_meta(path, version_details=details)
-    _add_history(path, "luna revise version " + str(version) +
-                 " with message '" + msg + "'")
-
-
-def reset(path, version):
-    _get_details(path, version)
-    os.popen("mv {} {}".format(_luna(path), os.path.join(path, "..", ".luna_temp"))).close()
-    delete = os.popen("rm -rf {}/*".format(path), "w")
-    delete.write("y")
-    delete.close()
-    os.popen("mv {} {}".format(os.path.join(path, "..", ".luna_temp"), _luna(path))).close()
-    os.popen("cp -r {} {}".format(_luna(path, "versions", str(version), "*"), path)).close()
-    _add_history(path, "luna reset to version " + str(version))
-
-
-def remove(path):
+def discard(path):
     os.popen("rm -rf {}".format(_luna(path))).close()
+    print("discard luna repo at " + path)
 
 
-def diff():
+def delete(path, version):
+    if version == _read_meta(path, "cur_version"):
+        _write_meta(path, cur_version="deleted")
+    os.popen("rm -rf {}".format(_luna(path, "versions", version))).close()
+    details = _get_details(path, version)
+    details.pop("version " + version)
+    _write_meta(path, version_details=details)
+    print("delete version " + version)
+
+
+def diff(path, v1, v2):
     raise NotImplementedError
 
 
@@ -129,15 +153,10 @@ def makefile(filepath, filename):
 
 
 if __name__ == '__main__':
-    p = "/Users/wzk/Desktop/"
-    init(p)
-    makefile(p, "1")
-    commit(p, "commit 1")
-    makefile(p, "2")
-    commit(p, "commit 2")
-    revise(p, 2, "commit 3 new message")
-    reset(p, 1)
-    reset(p, 2)
-    history(p)
-    #commit(p, "third commit!")
-    #init(p)
+    p = os.getcwd()
+    if len(sys.argv) < 2:
+        raise ValueError("missing command arg")
+    command = sys.argv[1]
+    exec(command + "('" + p + "'," +
+         ",".join(["'" + arg + "'" for arg in sys.argv[2:]])
+         + ")")

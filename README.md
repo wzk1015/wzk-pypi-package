@@ -72,7 +72,33 @@ print(bleu("they are good", "they are not good", k=2))
 
 ### simple version control system
 
-luna init; luna commit; luna reset;
+(1) Use in shell (command line)
+
+Note: support Linux and Mac OS   ( try git bash if using Windows)
+
+```bash
+#install
+#change PATH to the absolute path of wzk/luna.py
+#change .bashrc if using another shell. e.g. ~/.zshrc
+echo "alias luna='python PATH/luna.py' " >> ~/.bashrc
+source ~/.bashrc
+
+mkdir test
+luna init
+touch blablabla
+luna commit "first commit"
+touch hahaha
+luna commit "second commit"
+luna log
+luna reset 1
+luna reset 2
+luna history
+luna delete 1
+luna info
+luna discard
+```
+
+(2) Use in python
 
 ```python
 from wzk.luna import *
