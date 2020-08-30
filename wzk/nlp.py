@@ -1,7 +1,7 @@
 import math
 
 
-def bleu(pred: str, gt: str, k=4):
+def bleu(pred, gt, k=4):
     def sub_seqs(tokens, length):
         for j in range(len(tokens) - length + 1):
             yield tokens[j: j+length]

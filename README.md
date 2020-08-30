@@ -70,7 +70,14 @@ print(bleu("they are good", "they are not good", k=2))
 
 ## Useful Tools
 
-### simple version control system
+### Luna: simple version control system
+
+"luna" can mean anything, depending on your mood.
+ - "light unix-like navigating assistant": you're in a good mood, and it actually
+   works for you. Angels sing, and a light suddenly fills the room. 
+ - "loony unsteady nerd as**ole": when it breaks
+ - the goddess of the moon in Roman mythology: isn't it great?
+ - Luna Lovegood in *HP*: correct!
 
 (1) Use in shell (command line)
 
