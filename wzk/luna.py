@@ -117,7 +117,11 @@ def reset(path, version=None):
 
 
 def log(path):
-    pprint(_read_meta(path, "version_details"))
+    s = _read_meta(path, "version_details")
+    if s:
+        pprint(s)
+    else:
+        print("no commits, empty log")
 
 
 def history(path):
@@ -157,46 +161,61 @@ def _diff_compare(in_lines1, in_lines2):
     return result
 
 
-def diff(path, version1=None, version2=None):
+def diff(path, version1=None, version2=None, file=None):
     def _replace(string):
         return string.replace(_luna(path), '').replace('/versions/', 'version') \
             .replace(r'\versions\ '[:-1], 'version')
 
+    def _is_file(string):
+        return string is not None and not string.isnumeric() and string != "-"
+
+    def _diff_file(file1, file2):
+        lines1, lines2 = "", ""
+        unique_file = ""
+        try:
+            with open(file1, errors="ignore") as f1:
+                lines1 = f1.read()
+        except FileNotFoundError:
+            unique_file = _replace(file1)
+        try:
+            with open(file2, errors="ignore") as f2:
+                lines2 = f2.read()
+        except FileNotFoundError:
+            assert unique_file == ""
+            unique_file = _replace(file2)
+        if unique_file:
+            print("unique file {}".format(unique_file))
+        else:
+            print("diff file {} {}".format(_replace(file1), _replace(file2)))
+        print(_diff_compare(lines1, lines2))
+
     def _diff_recur(d: filecmp.dircmp, key, v1path, v2path):
-        for file in d.__getattr__(key):
-            path1 = os.path.join(v1path, file)
-            path2 = os.path.join(v2path, file)
-            lines1, lines2 = "", ""
-            if key != "right_only":
-                with open(path1, errors="ignore") as f1:
-                    lines1 = f1.read()
-            if key != "left_only":
-                with open(path2, errors="ignore") as f2:
-                    lines2 = f2.read()
-            if key == "diff_files":
-                print("diff file {} {}".format(_replace(path1), _replace(path2)))
-            else:
-                print("unique file {}".format(_replace(path1) if key == "left_only"
-                                              else _replace(path2)))
-            print(_diff_compare(lines1, lines2))
+        for f in d.__getattr__(key):
+            _diff_file(os.path.join(v1path, f), os.path.join(v2path, f))
         for name, sd in d.subdirs.items():
-            _diff_recur(sd, key, os.path.join(v1path, name),
-                        os.path.join(v2path, name))
-    
-    v1 = _read_meta(path, "cur_version") if version1 is None else str(version1)
-    v2 = "[not staged]" if version2 is None else str(version2)
+            _diff_recur(sd, key, os.path.join(v1path, name), os.path.join(v2path, name))
+
+    v1 = _read_meta(path, "cur_version") if version1 in [None, "-"] or _is_file(version1) else str(version1)
+    v2 = "[not staged]" if version2 in [None, "-"] or _is_file(version2) else str(version2)
     dir1 = _luna(path, "versions", v1)
-    dir2 = _luna(path, "versions", v2) if version2 is not None else path
-    d = filecmp.dircmp(dir1, dir2, hide=[os.curdir, os.pardir, ".luna"], ignore=['.git', '.DS_Store'])
-    print("Overall diff".center(50, "-"))
-    d.report_full_closure()
-    print("Different files".center(50, "-"))
-    _diff_recur(d, "diff_files", dir1, dir2)
-    print("Unique files".center(50, "-"))
-    print(("Version " + v1 + " only").center(50, "-"))
-    _diff_recur(d, "left_only", dir1, dir2)
-    print(("Version " + v2 + " only").center(50, "-"))
-    _diff_recur(d, "right_only", dir1, dir2)
+    dir2 = _luna(path, "versions", v2) if v2 != "[not staged]" else path
+    file = version1 if _is_file(version1) else file
+    file = version2 if version1 is not None and not _is_file(version1) and _is_file(version2) else file
+    if file is not None:
+        _diff_file(os.path.join(dir1, file), os.path.join(dir2, file))
+    else:
+        d = filecmp.dircmp(dir1, dir2, hide=[os.curdir, os.pardir, ".luna"], ignore=['.git', '.DS_Store'])
+        v1, v2 = "Version " + v1 + (" (latest version)" if version1 in [None, "-"] else ""), \
+                 ("Version " + v2 if v2 != "[not staged]" else "working directory")
+        print("Comparing {} and {}".format(v1, v2))
+        print("Overall diff".center(50, "-"))
+        d.report_full_closure()
+        print("Different files".center(50, "-"))
+        _diff_recur(d, "diff_files", dir1, dir2)
+        print((v1 + " unique files").center(50, "-"))
+        _diff_recur(d, "left_only", dir1, dir2)
+        print((v2 + " unique files").center(50, "-"))
+        _diff_recur(d, "right_only", dir1, dir2)
 
 
 def makefile(filepath, filename):
@@ -205,6 +224,7 @@ def makefile(filepath, filename):
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        raise ValueError("missing command arg")
-    exec("{}({},{})".format(sys.argv[1], os.getcwd(),
-                            ",".join(["'" + arg + "'" for arg in sys.argv[2:]])))
+        print("Hi! I'm luna~\nplease give me a command by 'luna xxx'")
+    else:
+        exec("{}('{}',{})".format(sys.argv[1], os.getcwd(),
+                                  ",".join(["'" + arg + "'" for arg in sys.argv[2:]])))

@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="wzk",
-    version="0.1.2",
+    version="0.1.3",
     author="zhaokai wang",
     author_email="self@wzk.plus",
     description="wzk's library",

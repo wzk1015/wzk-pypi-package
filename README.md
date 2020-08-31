@@ -4,7 +4,7 @@ This is wzk's personal python library~
 
 # How to install?
 simply run `pip install wzk`. That's it!
-
+(make sure your python version >= 3.7)
 
 
 
@@ -73,30 +73,37 @@ print(bleu("they are good", "they are not good", k=2))
 ### Luna: simple version control system
 
 "luna" can mean anything, depending on your mood.
- - "light unix-like navigating assistant": you're in a good mood, and it actually
-   works for you. Angels sing, and a light suddenly fills the room. 
- - "loony unsteady nerd as**ole": when it breaks
  - the goddess of the moon in Roman mythology: isn't it great?
+ - `"light unix-like navigating assistant"`: you're in a good mood, and it actually
+   works for you. Angels sing, and a light suddenly fills the room. 
+ - `"loony unsteady nerd as**ole"`: when it breaks
  - Luna Lovegood in *HP*: correct!
 
 (1) Use in shell (command line)
 
-Note: support Linux and Mac OS   ( try git bash if using Windows)
+Note: support Linux and Mac OS   (try git bash if using Windows)
 
-```bash
+```shell script
 #install
 #change PATH to the absolute path of wzk/luna.py
 #change .bashrc if using another shell. e.g. ~/.zshrc
 echo "alias luna='python PATH/luna.py' " >> ~/.bashrc
 source ~/.bashrc
+#for single trial, "alias luna='python PATH/luna.py'" is enough
 
+#try luna!
 mkdir test
+cd test
 luna init
-touch blablabla
+touch 666.txt
 luna commit "first commit"
 touch hahaha
+echo "hello world" >> 666.txt
+luna diff
 luna commit "second commit"
 luna log
+luna diff 1 2
+luna diff 1 666.txt
 luna reset 1
 luna reset 2
 luna history
