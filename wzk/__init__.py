@@ -8,8 +8,7 @@ from .games.mine_sweeper import play as mine_sweep
 from .games.texas_poker import play as texas_poker
 from .games.pokemon import play as pokemon
 from .games.mahjong import play as mahjong
-from .vocab.vocab import lookup
-from .vocab.vocab import translate
+from .english.english import lookup, translate, direct_translate, funny_translate
 from .utils import *
 from .ds import *
 from .parser import *

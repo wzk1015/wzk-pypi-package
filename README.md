@@ -26,17 +26,29 @@ wzk.pokemon()
 wzk.mahjong()
 ```
 
+### 鬼畜
+What happens if you translate one sentence 20 times with Baidu translation?
+```python
+import wzk
+wzk.funny_translate("二臣贼子，你枉活七十有六，一生未立寸功，只会摇唇鼓舌，助曹为虐！")
+```
+
 
 
 ## Academic 
 
 ### look up english words in dictionary
 
-Off-line Chinese-English dictionary with more than 100k words
+Off-line Chinese-English dictionary with more than 100k words;
+
+Translate with baidu or off-line dictionary
 ```python
 import wzk
 wzk.lookup("good", verbose=True, non_alpha=False)
+#translate with baidu
 wzk.translate("I love you")
+#translate with dictionary
+wzk.direct_translate("I love you")
 ```
 
 ### check your OO homework
@@ -147,7 +159,7 @@ import wzk
 mail_host = ...
 mail_user = ...
 mail_pass = ...
-checker = wzk.parser.WebPageUpdateChecker(mail_host, mail_user, mail_pass)
+checker = wzk.parser.WebPageUpdateChecker(mail_host, mail_user, mail_pass, cookies=None)
 checker.check("www.baidu.com", interval=10)
 ```
 
@@ -217,9 +229,9 @@ from wzk.autograd.thing import *
 a = thing(2)
 b = thing(3)
 c = a + leaky_relu(b)
-d = thing(5) # a + a*b
-e = tanh(d) # (a + a*b) * (a*b) = a^2(b + b^2)
-f = relu(c) + sin(e)
+d = thing(5) 
+e = tanh(d) 
+f = relu(e)
 g = log(f)
 
 g.backward()

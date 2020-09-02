@@ -9,10 +9,10 @@ from wzk.utils import diff_compare
 
 class MailSender:
     def __init__(self, host, mail_addr, password):
-        self.mail_host = host       #设置SMTP服务器，如smtp.qq.com
+        self.mail_host = host  #设置SMTP服务器，如smtp.qq.com
         self.mail_user = mail_addr  #发送邮箱的用户名，如xxxxxx@qq.com
-        self.mail_pass = password   #发送邮箱的密码（注：QQ邮箱需要开启SMTP服务后在此填写授权码）
-        self.sender = mail_addr     #发件邮箱，如xxxxxx@qq.com
+        self.mail_pass = password  #发送邮箱的密码（注：QQ邮箱需要开启SMTP服务后在此填写授权码）
+        self.sender = mail_addr  #发件邮箱，如xxxxxx@qq.com
 
     def send_mail(self, title, content, receiver=None):
         if receiver is None:
@@ -66,7 +66,6 @@ class WebPageUpdateChecker:
                 html_content = new_content
             else:
                 print("no update")
-
             sleep(interval)
 
 
