@@ -7,6 +7,24 @@ import sys
 from pprint import pprint
 from difflib import Differ
 import filecmp
+from wzk import __path__ as wzk_path
+
+
+def install():
+    shell = os.environ["SHELL"]
+    if shell.endswith("zsh"):
+        shell_rc_path = "~/.zshrc"
+    elif shell.endswith("bash"):
+        shell_rc_path = "~/.bashrc"
+    else:
+        raise NotImplementedError("unknown shell: " + shell)
+    luna_src_path = os.path.join(wzk_path[0], "luna.py")
+    msg = os.popen("echo \"alias luna='python {}'\" >> {}; source {}".
+                   format(luna_src_path, shell_rc_path, shell_rc_path)).read()
+    if msg:
+        print("received system message:", msg)
+    else:
+        print("successfully installed luna to", shell_rc_path)
 
 
 def _luna(path, *args):

@@ -91,19 +91,27 @@ print(bleu("they are good", "they are not good", k=2))
  - `"loony unsteady nerd as**ole"`: when it breaks
  - Luna Lovegood in *HP*: correct!
 
-(1) Use in shell (command line)
+(1) installation
+* method 1: python  -- **recommended**
+```python
+import wzk.luna
+wzk.luna.install()
+```
 
-Note: support Linux and Mac OS   (try git bash if using Windows)
-
+* method 2: shell
 ```shell script
-#install
 #change PATH to the absolute path of wzk/luna.py
 #change .bashrc if using another shell. e.g. ~/.zshrc
 echo "alias luna='python PATH/luna.py' " >> ~/.bashrc
 source ~/.bashrc
 #for single trial, "alias luna='python PATH/luna.py'" is enough
+```
 
-#try luna!
+(2) Use in shell (command line)  -- **recommended**
+
+Note: support Linux and Mac OS   (try git bash if using Windows)
+
+```shell script
 mkdir test
 cd test
 luna init
@@ -124,11 +132,11 @@ luna info
 luna discard
 ```
 
-(2) Use in python
+(3) Use in python
 
 ```python
 from wzk.luna import *
-p = "/Users/wzk/Desktop/"
+p = "~/Desktop/"
 init(p)
 makefile(p, "1")
 commit(p, "commit 1")
