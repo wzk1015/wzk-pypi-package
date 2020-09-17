@@ -11,6 +11,10 @@ def diff_compare(in_lines1, in_lines2):
     return result
 
 
+def sm(condition, value1, value2):
+    return value1 if condition else value2
+
+
 class ErrorFucker:
     def __init__(self, msg="You idiot! You've raised error!",
                  exps=None, raises=False, bonus=True):
@@ -107,6 +111,9 @@ class Clock:
 
 
 if __name__ == '__main__':
+    a = sm("1" in ["1"], sm("4" in ["4"], "2", "4"), "3")
+    print(a)
+    input()
     with ErrorFucker(raises=False) as ef1:
         d1 = int("f")
 

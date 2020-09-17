@@ -13,6 +13,7 @@ from .utils import *
 from .ds import *
 from .parser import *
 from .autograd import *
+from .par_match import match
 from os import system
 
 from time import ctime
