@@ -26,6 +26,8 @@ wzk.pokemon()
 wzk.mahjong()
 ```
 
+**Refer to [wzk-Game-Collection](https://github.com/wzk1015/wzk-Game-Collection) to get started!**
+
 ### 鬼畜
 What happens if you translate one sentence 20 times with Baidu translation?
 ```python
@@ -91,62 +93,8 @@ print(bleu("they are good", "they are not good", k=2))
  - `"loony unsteady nerd as**ole"`: when it breaks
  - Luna Lovegood in *HP*: correct!
 
-(1) installation
-* method 1: python  -- **recommended**
-```python
-import wzk.luna
-wzk.luna.install()
-```
+**Refer to [luna repo](https://github.com/wzk1015/luna) for details!**
 
-* method 2: shell
-```shell script
-#change PATH to the absolute path of wzk/luna.py
-#change .bashrc if using another shell. e.g. ~/.zshrc
-echo "alias luna='python PATH/luna.py' " >> ~/.bashrc
-source ~/.bashrc
-#for single trial, "alias luna='python PATH/luna.py'" is enough
-```
-
-(2) Use in shell (command line)  -- **recommended**
-
-Note: support Linux and Mac OS   (try git bash if using Windows)
-
-```shell script
-mkdir test
-cd test
-luna init
-touch 666.txt
-luna commit "first commit"
-touch hahaha
-echo "hello world" >> 666.txt
-luna diff
-luna commit "second commit"
-luna log
-luna diff 1 2
-luna diff 1 666.txt
-luna reset 1
-luna reset 2
-luna history
-luna delete 1
-luna info
-luna discard
-```
-
-(3) Use in python
-
-```python
-from wzk.luna import *
-p = "~/Desktop/"
-init(p)
-makefile(p, "1")
-commit(p, "commit 1")
-makefile(p, "2")
-commit(p, "commit 2")
-revise(p, 2, "commit 3 new message")
-reset(p, 1)
-reset(p, 2)
-history(p)
-```
 
 ### send email
 
