@@ -7,6 +7,7 @@ import json
 from time import sleep
 
 vocab = {}
+wordle = []
 
 
 class WordNotFoundError(Exception):
@@ -38,6 +39,10 @@ def load_vocab():
     global vocab
     from wzk.english.vocabulary import v
     vocab = v
+    for word in vocab.keys():
+        if len(word) == 5 and word.isalpha():
+            wordle.append(word.lower())
+    wordle.sort()
 
 
 def lookup(string, verbose=True, non_alpha=False):
@@ -125,5 +130,82 @@ def funny_translate(query, times=20):
         sleep(1)
 
 
+def words_like(query):
+    if not vocab:
+        load_vocab()
+    assert len(query) == 5
+    condition = [0, 0, 0, 0, 0]
+    for i, ch in enumerate(query):
+        if ch.isalpha():
+            condition[i] = ch.lower()
+
+    ans = []
+    for word in wordle:
+        flag = False
+        for i, cond in enumerate(condition):
+            if cond != 0 and cond != word[i]:
+                flag = True
+                break
+        if not flag:
+            ans.append(word)
+    return ans
+
+
+def solve_wordle(yellows=(), greens=()):
+    '''
+    yellows/greens: ["Y1", "C2", ...]
+    '''
+    if not yellows and not greens:
+        raise ValueError("no requirement specified")
+
+    for i, green in enumerate(greens):
+        greens[i] = (green[0].lower(), int(green[1])-1)
+    for i, yellow in enumerate(yellows):
+        yellows[i] = (yellow[0].lower(), int(yellow[1])-1)
+
+    query = ["-"] * 5
+    for ch, pos in greens:
+        query[pos] = ch
+
+    possible_words = words_like(query)
+    ans = []
+    for word in possible_words:
+        flag = False
+        for ch, pos in yellows:
+            if ch not in word or word[pos] == ch:
+                flag = True
+                break
+        if not flag:
+            ans.append(word)
+    return ans
+
+
+def solve_wordle_simple(trials, colors):
+    '''
+    trials: ["OPERA", "LEMON", "EIGHT"]
+    colors: ["YBYBB", "BYBYB", "YBBYY"]
+    '''
+    yellows = []
+    greens = []
+    for i, color in enumerate(colors):
+        for j, ch in enumerate(color):
+            if ch.upper() == "Y":
+                yellows.append((trials[i][j], j+1))
+            elif ch.upper() == "G":
+                greens.append((trials[i][j], j+1))
+    return solve_wordle(yellows, greens)
+
+
+
+
 if __name__ == '__main__':
-    funny_translate("二臣贼子，你枉活七十有六，一生未立寸功，只会摇唇鼓舌，助曹为虐！")
+    # funny_translate("二臣贼子，你枉活七十有六，一生未立寸功，只会摇唇鼓舌，助曹为虐！")
+    # print(words_like("SEA__"))
+    print(solve_wordle(
+        yellows=["O1", "E3", "E2", "O4", "E1", "H4"],
+        greens=["T1"]
+    ))
+    print(solve_wordle_simple(
+        trials=["OPERA", "LEMON", "EIGHT"],
+        colors=["YBYBB", "BYBYB", "YBBYY"]
+    ))
