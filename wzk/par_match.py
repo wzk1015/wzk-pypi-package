@@ -9,11 +9,15 @@ bg_color_dict = {1: "41",  #red
 match_dict = {
     ")": "(",
     "]": "[",
-    # "'" : "'",
-    # '"' : '"',
     "}": "{",
-    ">": "<"
+    ">": "<",
+    "）": "（",
+    "】": "【",
+    "」": "「",
+    "》": "《",
 }
+
+quotes = ["\"", "\'"]
 
 
 def match(s):
@@ -34,12 +38,15 @@ def match(s):
                     return False
                 colors[idx] = colors[id]
             idx += 1
+
             if not idx >= len(s):
                 ch = s[idx]
             else:
                 break
+
         for i in range(len(s)):
             print("\033[5;30;{0}m{1}\033[0m".format(colors[i], s[i]), end="")
+
         print()
     except IndexError:
         print("括号不匹配:", "index error")

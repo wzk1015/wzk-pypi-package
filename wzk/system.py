@@ -1,7 +1,5 @@
 import platform
 
-os = platform.system()
-
 #global var
 #是否显示日志信息
 SHOW_LOG = True

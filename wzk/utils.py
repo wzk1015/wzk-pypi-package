@@ -129,4 +129,3 @@ if __name__ == '__main__':
 
     with ErrorFucker(raises=True) as ef2:
         d2 = int("d")
-

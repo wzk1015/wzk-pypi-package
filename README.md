@@ -122,7 +122,7 @@ checker.check("www.baidu.com", interval=10)
 ### check system information
 see information on your system and python
 ```python
-from wzk.os import *
+from wzk.system import *
 show_os_all_info()
 show_python_all_info()
 ```
