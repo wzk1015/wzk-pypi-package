@@ -303,6 +303,6 @@ if __name__ == '__main__':
     # solver = SimplexSolver(s)
     # solver.solve()
     #print(is_prime(127789007))
-    print(factorize(110102199910152711))
+    print(factorize(234))
 
 
